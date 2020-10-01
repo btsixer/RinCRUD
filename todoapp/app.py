@@ -1,5 +1,5 @@
 # Import Flask and SQLAlchemy to allow Python access to script to the database with Object Relational Mapping
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 
 # Set the flask instance to an app variable for later use
@@ -28,6 +28,14 @@ db.create_all()
 def index():
     return render_template('index.html', data=Todo.query.all()
     )
+
+@app.route('/todos/create', methods=['POST'])
+def create_todo():
+    description = request.form.get('description', '')
+    todo = Todo(description=description)
+    db.session.add(todo)
+    db.session.commit()
+    return redirect(url_for('index'))
 
 if __name__ == '__main__': 
  app.run()
